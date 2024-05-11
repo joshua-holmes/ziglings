@@ -1,5 +1,7 @@
 # Ziglings
 
+This is a fork of the [ziglings exercises repo](https://codeberg.org/ziglings/exercises/). I forked it just so I could practice and have somewhere to push my code and save my progress.
+
 Welcome to Ziglings! This project contains a series of tiny
 broken programs (and one nasty surprise).  By fixing them, you'll
 learn how to read and write [Zig](https://ziglang.org/) code.
