@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# restores everything commited so it will grab exercises in alph order
+git restore --staged .
+
+# loop through git changes
+changes=$(git status | rg '\t' | xargs)
+
+# get zig build output so we only save passing tests
+
+for change in $changes; do
+    # eliminate non-exercises
+    if [[ "$change" != "exercises"* ]]; then
+        # ignore anything that is not an exercise
+        continue
+    fi
+
+    # parse git status output for the number of the exercise, `bc` gets rid of leading 0s
+    num_str=$(echo "${change}" | cut -d'/' -f2 | cut -d'_' -f1)
+    num=$(echo "${num_str}" | bc)
+    if (( $? != 0 )); then
+        echo 'a number parsing error occurred with what was piped into `bc`, which was:'
+        echo ${num_str}
+        echo "exiting..."
+        git restore --staged .
+        exit
+    fi
+
+    # eliminate failed tests
+    zig build -Dn="${num}"
+    if (( $? != 0 )); then
+        #ignore failing tests
+        continue
+    fi
+
+    git add "${change}"
+    git commit -m "Solve problem ${num}"
+done
+
